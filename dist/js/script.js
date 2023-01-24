@@ -75,17 +75,37 @@
       /*add element to menu*/
       menuContainer.appendChild(thisProduct.element);
     }
+    getElements() {
+      const thisProduct = this;
+
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(
+        select.menuProduct.clickable
+      );
+      thisProduct.form = thisProduct.element.querySelector(
+        select.menuProduct.form
+      );
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(
+        select.all.formInputs
+      );
+      thisProduct.cartButton = thisProduct.element.querySelector(
+        select.menuProduct.cartButton
+      );
+      thisProduct.priceElem = thisProduct.element.querySelector(
+        select.menuProduct.priceElem
+      );
+    }
+
     initAccordion() {
       const thisProduct = this;
       //   /* find the clickable trigger (the element that should react to clicking) */
-      const clickableTrigger = document.querySelector(
+      const clickableTrigger = thisProduct.element.querySelector(
         select.menuProduct.clickable
       );
       console.log(clickableTrigger);
       //   /* START: add event listener to clickable trigger on event click */
       clickableTrigger.addEventListener('click', function (event) {
         event.preventDefault();
-        //     /* prevent default action for event */
+        /* prevent default action for event */
         const activeProduct = document.querySelector(
           select.all.menuProductsActive
         );
