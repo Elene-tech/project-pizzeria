@@ -98,6 +98,7 @@
         select.menuProduct.priceElem
       );
       thisProduct.imageWrapper=thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      
     }
 
     initAccordion() {
@@ -141,7 +142,7 @@
       thisProduct.cartButton.addEventListener('click', function(event){
       event.preventDefault();
       thisProduct.processOrder();
-      });
+      }); 
     }
     processOrder() {
       const thisProduct = this;
@@ -175,6 +176,15 @@
             //decrease price variable
             price-=option.price;
            }
+      const optionImage=thisProduct.imageWrapper.querySelector('.'+ paramId + '-' + optionId);
+      console.log(optionImage);
+      if(optionImage){
+        if(chosenOption){
+          optionImage.classList.add(classNames.menuProduct.imageVisible);
+        }else{
+          optionImage.classList.remove(classNames.menuProduct.imageVisible);
+        }
+      }
       }
     }
 
