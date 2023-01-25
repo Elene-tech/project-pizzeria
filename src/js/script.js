@@ -63,6 +63,9 @@
       thisProduct.renderInMenu();
       thisProduct.getElements();
       thisProduct.initAccordion();
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
+
       console.log('new Product:', thisProduct); //add class Product
     }
     renderInMenu() {
@@ -94,6 +97,7 @@
       thisProduct.priceElem = thisProduct.element.querySelector(
         select.menuProduct.priceElem
       );
+      thisProduct.imageWrapper=thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion() {
@@ -108,8 +112,9 @@
         /* prevent default action for event */
         const activeProduct = document.querySelector(
           select.all.menuProductsActive
+          /* find active product (product that has active class) */
         );
-        /* find active product (product that has active class) */
+        
         if (activeProduct !== thisProduct.element && activeProduct !== null) {
           activeProduct.classList.remove(classNames.menuProduct.wrapperActive);
         }
@@ -122,8 +127,24 @@
     }
     initOrderForm() {
       const thisProduct = this;
+      thisProduct.form.addEventListener('submit', function(event){
+      event.preventDefault();
+      thisProduct.processOrder();
+      });
+
+      for(let input of thisProduct.formInputs){
+      input.addEventListener('change', function(){
+      thisProduct.processOrder();
+      });
+    }
+
+      thisProduct.cartButton.addEventListener('click', function(event){
+      event.preventDefault();
+      thisProduct.processOrder();
+      });
     }
     processOrder() {
+      const thisProduct = this;
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
         const formData = utils.serializeFormToObject(thisProduct.form);
         console.log('formData', formData);
