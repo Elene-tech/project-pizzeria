@@ -44,7 +44,7 @@
     amountWidget: {
       defaultValue: 1,
       defaultMin: 1,
-      defaultMax: 9,
+      defaultMax: 10,
     },
   };
 
@@ -64,6 +64,9 @@
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      //у Product викличте цей метод безпосередньо перед викликом processOrder
+      thisProduct.initAmountWidget();
+
       thisProduct.processOrder();
 
       console.log('new Product:', thisProduct); //add class Product
@@ -97,8 +100,15 @@
       thisProduct.priceElem = thisProduct.element.querySelector(
         select.menuProduct.priceElem
       );
-      thisProduct.imageWrapper=thisProduct.element.querySelector(select.menuProduct.imageWrapper);
-      
+      thisProduct.imageWrapper = thisProduct.element.querySelector(
+        select.menuProduct.imageWrapper
+      );
+      //додайте нову властивість thisProduct.amountWidgetElem. Переконайтеся, що його значення є посиланням на element з select.menuProduct.amountWidget.
+      //Не забудьте шукати його в div окремого продукту(?)
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(
+        select.menuProduct.amountWidget
+      );
+      console.log(thisProduct.amountWidgetElem);
     }
 
     initAccordion() {
@@ -115,7 +125,7 @@
           select.all.menuProductsActive
           /* find active product (product that has active class) */
         );
-        
+
         if (activeProduct !== thisProduct.element && activeProduct !== null) {
           activeProduct.classList.remove(classNames.menuProduct.wrapperActive);
         }
@@ -128,68 +138,153 @@
     }
     initOrderForm() {
       const thisProduct = this;
-      thisProduct.form.addEventListener('submit', function(event){
-      event.preventDefault();
-      thisProduct.processOrder();
+      thisProduct.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
       });
 
-      for(let input of thisProduct.formInputs){
-      input.addEventListener('change', function(){
-      thisProduct.processOrder();
-      });
-    }
+      for (let input of thisProduct.formInputs) {
+        input.addEventListener('change', function () {
+          thisProduct.processOrder();
+        });
+      }
 
-      thisProduct.cartButton.addEventListener('click', function(event){
-      event.preventDefault();
-      thisProduct.processOrder();
-      }); 
+      thisProduct.cartButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
     }
     processOrder() {
       const thisProduct = this;
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
-        const formData = utils.serializeFormToObject(thisProduct.form);
-        console.log('formData', formData);
+      const formData = utils.serializeFormToObject(thisProduct.form);
 
       // set price to default price
-       let price = thisProduct.data.price;
+      let price = thisProduct.data.price;
 
       // for every category (param)...
-      for(let paramId in thisProduct.data.params) {
-      // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
-      const param = thisProduct.data.params[paramId];
-      console.log(paramId, param);
+      for (let paramId in thisProduct.data.params) {
+        // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+        const param = thisProduct.data.params[paramId];
+        console.log(paramId, param);
 
-      // for every option in this category
-      for(let optionId in param.options) {
-     // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
-      const option = param.options[optionId];
-      console.log(optionId, option);
-     //check if formData parameter has a value and if there`s a name of an option
-      const chosenOption=(formData[paramId]&&formData[paramId].includes(optionId));
-      // check if the option is not a default
-           if (chosenOption){
-            if(option.default==false);
-            //add option price to price variable
-            price+=option.price;
-           }else{
-            if(option.default==true);
-            //decrease price variable
-            price-=option.price;
-           }
-      const optionImage=thisProduct.imageWrapper.querySelector('.'+ paramId + '-' + optionId);
-      console.log(optionImage);
-      if(optionImage){
-        if(chosenOption){
-          optionImage.classList.add(classNames.menuProduct.imageVisible);
-        }else{
-          optionImage.classList.remove(classNames.menuProduct.imageVisible);
+        // for every option in this category
+        for (let optionId in param.options) {
+          // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+          const option = param.options[optionId];
+          //console.log(optionId, option);
+          //check if formData parameter has a value and if there`s a name of an option
+          const chosenOption =
+            formData[paramId] && formData[paramId].includes(optionId);
+          // check if the option is not a default
+          if (chosenOption) {
+            if (!option.default == true);
+            price += option.price;
+          } else {
+            if (!option.default == false);
+            price -= option.price;
+          }
+          const optionImage = thisProduct.imageWrapper.querySelector(
+            '.' + paramId + '-' + optionId
+          );
+          console.log(optionImage);
+          if (optionImage) {
+            if (chosenOption) {
+              optionImage.classList.add(classNames.menuProduct.imageVisible);
+            } else {
+              optionImage.classList.remove(classNames.menuProduct.imageVisible);
+            }
+          }
         }
       }
-      }
+      //multiply price by amount
+      price *= thisProduct.amountWidget.value;
+      // update calculated price in the HTML
+      thisProduct.priceElem.innerHTML = price;
     }
 
-    // update calculated price in the HTML
-     thisProduct.priceElem.innerHTML = price;
+    //в Product, додайте новий initAmountWidget
+    initAmountWidget() {
+      const thisProduct = this;
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+
+      thisProduct.amountWidgetElem.addEventListener('updated', function () {});
+    }
+  }
+
+  class AmountWidget {
+    constructor(element) {
+      const thisWidget = this;
+
+      console.log('AmountWidget:', thisWidget);
+      console.log('constructor arguments:', element);
+      thisWidget.getElements(element);
+      //викликати цей метод в конструкторі під час виклику getElements
+      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions(); //не можна вводити більше 10 штук
+    }
+    getElements(element) {
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(
+        select.widgets.amount.input
+      );
+      thisWidget.linkDecrease = thisWidget.element.querySelector(
+        select.widgets.amount.linkDecrease
+      );
+      thisWidget.linkIncrease = thisWidget.element.querySelector(
+        select.widgets.amount.linkIncrease
+      );
+    }
+
+    setValue(value) {
+      const thisWidget = this;
+      const newValue = parseInt(value); //змінює строку на число, "10"стає 10
+      /*TODO: Add validation*/
+
+      const {
+        amountWidget: { defaultMax, defaultMin },
+      } = settings;
+      if (newValue > defaultMax || newValue < defaultMin) {
+        return;
+      }
+
+      if (thisWidget.value !== newValue) {
+        thisWidget.value = newValue;
+      }
+      /*TODO: Add validation*/
+      if (thisWidget.value !== newValue && isNaN(newValue)) {
+        thisWidget.value = newValue;
+      }
+
+      thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget.value;
+      thisWidget.announce();
+    }
+    announce() {
+      const thisWidget = this;
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
+    }
+
+    initActions() {
+      const thisWidget = this;
+      //використовуємо пусту функцію, щоб додати в аргумент функцію
+      thisWidget.input.addEventListener('change', function () {
+        setValue(thisWidget.input.value);
+      });
+      //додати Listener click, для якого обробник зупинить дію за замовчуванням для цієї події
+      thisWidget.linkDecrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        //і використовуватиме setValue з аргументом thisWidget.value мінус 1
+        thisWidget.setValue(thisWidget.value - 1);
+      });
+
+      thisWidget.linkIncrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value + 1);
+      });
     }
   }
 
