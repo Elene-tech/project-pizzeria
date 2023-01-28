@@ -220,8 +220,8 @@
       console.log('constructor arguments:', element);
       thisWidget.getElements(element);
       //викликати цей метод в конструкторі під час виклику getElements
-      thisWidget.setValue(thisWidget.input.value);
-      thisWidget.initActions(); //не можна вводити більше 10 штук
+      thisWidget.setValue(settings.amountWidget.defaultValue);
+      thisWidget.initActions();
     }
     getElements(element) {
       const thisWidget = this;
