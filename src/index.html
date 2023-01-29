@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<!-- New header -->
   <header class="header">
     <div class="container">
       <div class="header__wrapper">
@@ -55,9 +56,9 @@
   </header>
 
     <div id="product-list" class="product-list container"></div>
-
-    <script id="template-menu-product" type="text/x-handlebars-template">
-      <article class="product"> <!-- product -->
+   <script id="template-cart-product" type="text/x-handlebars-template"></script> <!-- New template-cart-product -->
+    <script id="template-menu-product" type="text/x-handlebars-template" class="amount">
+      <article class="product active"> <!-- product -->
 
           <header class="product__header">
             <h3 class="product__name no-spacing">{{ name }} <i class="fas fa-chevron-down product__icon"></i></h3>
@@ -114,7 +115,7 @@
                 <div class="widget-amount"> <!-- widget-amount -->
                   <h3 class="product__params-title">Select quantity</h3>
                   <a class="btn-quantity" href="#less"><i class="fas fa-minus"></i></a>
-                  <input type="text" name="amount">
+                  <input type="text" class="amount" value="1">
                   <a class="btn-quantity" href="#more"><i class="fas fa-plus"></i></a>
                 </div>
                 <p class="product__total-price">
