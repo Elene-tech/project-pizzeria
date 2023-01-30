@@ -313,7 +313,6 @@
 
     initActions() {
       const thisWidget = this;
-
       //використовуємо пусту функцію, щоб додати в аргумент функцію
       thisWidget.input.addEventListener('change', function () {
         setValue(thisWidget.input.value);
@@ -324,7 +323,6 @@
         //і використовуватиме setValue з аргументом thisWidget.value мінус 1
         thisWidget.setValue(thisWidget.value - 1);
       });
-
       thisWidget.linkIncrease.addEventListener('click', function (event) {
         event.preventDefault();
         thisWidget.setValue(thisWidget.value + 1);
@@ -338,6 +336,7 @@
 
       thisCart.products = [];
       thisCart.getElements(element);
+      thisCart.initActions();
       console.log('new Cart', thisCart);
     }
 
@@ -345,6 +344,17 @@
       const thisCart = this;
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
+      thisCart.dom.toggleTrigger = element.querySelector(
+        select.cart.toggleTrigger
+      );
+    }
+    initActions() {
+      const thisCart = this;
+      thisCart.dom.toggleTrigger.addEventListener('click', function (event) {
+        event.preventDefault(); //Обробником цього listener є перемикання класу,
+        //збереженого в classNames.cart.wrapperActive для thisCart.dom.wrapper.
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
     }
   }
 
