@@ -188,6 +188,7 @@
 
       thisProduct.cartButton.addEventListener('click', function (event) {
         event.preventDefault();
+        thisProduct.addToCart();
         thisProduct.processOrder();
       });
     }
@@ -215,12 +216,19 @@
             formData[paramId] && formData[paramId].includes(optionId);
           // check if the option is not a default
           if (chosenOption) {
-            if (!option.default == true);
-            price += option.price;
-          } else {
-            if (!option.default == false);
-            price -= option.price;
+            if (!option.default == true || !option.default == 'undefined') {
+              price += option.price;
+            } else {
+              price -= option.price;
+            }
           }
+          // if (chosenOption) {
+          //   if (!option.default == true);
+          //   price += option.price;
+          // } else {
+          //   if (!option.default == false);
+          //   price -= option.price;
+          // }
           const optionImage = thisProduct.imageWrapper.querySelector(
             '.' + paramId + '-' + optionId
           );
@@ -252,6 +260,11 @@
           thisProduct.processOrder(); //додати просту анонімну функцію, яка подбає про запуск thisProduct.processOrder();
         }
       );
+    }
+    //У Product також додайте новий метод
+    addToCart() {
+      const thisProduct = this;
+      app.cart.add(thisProduct);
     }
   }
 
@@ -355,6 +368,11 @@
         //збереженого в classNames.cart.wrapperActive для thisCart.dom.wrapper.
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
+    }
+
+    add(menuProduct) {
+      //const thisCart=this;
+      console.log('adding product', menuProduct);
     }
   }
 
