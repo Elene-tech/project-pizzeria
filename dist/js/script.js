@@ -245,6 +245,9 @@
       //multiply price by amount
       price *= thisProduct.amountWidget.value;
       // update calculated price in the HTML
+      thisProduct.priceSingle = price;
+      //додайте оператор, який надає priceSingle нову властивістьthisProduct.
+      // Призначте його значенням тієї ж ціни, що ми також записали в HTML
       thisProduct.priceElem.innerHTML = price;
     }
 
@@ -264,7 +267,48 @@
     //У Product також додайте новий метод
     addToCart() {
       const thisProduct = this;
-      app.cart.add(thisProduct);
+      app.cart.add(thisProduct.readyCartProduct());
+      //передайте те, що повертає thisProduct.readyCartProduct
+    }
+
+    readyCartProduct() {
+      const thisProduct = this;
+
+      const productSummary = {
+        id: thisProduct.id,
+        name: thisProduct.data.name,
+        amount: thisProduct.amountWidget.value,
+        priceSingle: thisProduct.priceSingle,
+        price: thisProduct.priceSingle * thisProduct.amountWidget.value,
+        //params: thisProduct.readyCartProduct(),
+      };
+      console.log(productSummary);
+      return productSummary;
+    }
+
+    readyCartProductParams() {
+      const thisProduct = this;
+      // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
+      const formData = utils.serializeFormToObject(thisProduct.form);
+
+      const params = {};
+
+      for (let paramId in thisProduct.data.params) {
+        // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
+        const param = thisProduct.data.params[paramId];
+        console.log(paramId, param);
+
+        // for every option in this category
+        for (let optionId in param.options) {
+          // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+          const option = param.options[optionId];
+          //console.log(optionId, option);
+          //check if formData parameter has a value and if there`s a name of an option
+          const chosenOption =
+            formData[paramId] && formData[paramId].includes(optionId);
+        }
+      }
+      return params;
     }
   }
 
