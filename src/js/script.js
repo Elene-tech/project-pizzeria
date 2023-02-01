@@ -280,7 +280,7 @@
         amount: thisProduct.amountWidget.value,
         priceSingle: thisProduct.priceSingle,
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
-        //params: thisProduct.readyCartProduct(),
+        params: thisProduct.readyCartProductParams(),
       };
       console.log(productSummary);
       return productSummary;
@@ -296,16 +296,23 @@
       for (let paramId in thisProduct.data.params) {
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
+        params[paramId] = {
+          label: param.label,
+          options: {},
+        };
         console.log(paramId, param);
 
         // for every option in this category
         for (let optionId in param.options) {
           // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
-          //console.log(optionId, option);
+
           //check if formData parameter has a value and if there`s a name of an option
           const chosenOption =
             formData[paramId] && formData[paramId].includes(optionId);
+          if (chosenOption) {
+            params[paramId].options[optionId] = option.label;
+          }
         }
       }
       return params;
@@ -404,6 +411,7 @@
       thisCart.dom.toggleTrigger = element.querySelector(
         select.cart.toggleTrigger
       );
+      thisCart.dom.productList = element.querySelector(select.cart.menuProduct);
     }
     initActions() {
       const thisCart = this;
@@ -415,8 +423,22 @@
     }
 
     add(menuProduct) {
-      //const thisCart=this;
+      const thisCart = this;
+
       console.log('adding product', menuProduct);
+
+      /*generate HTML based on template*/
+      const generatedHTML = templates.cartProduct(menuProduct);
+      console.log(generatedHTML);
+      //Потім замініть цей код elementом DOM і збережіть його в наступній константі, generatedDOM.
+      /*create element using utils.createElementFromHTML*/
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+
+      /*find cart container*/
+      const cartContainer = document.querySelector(select.containerOf.cart);
+      console.log(cartContainer);
+      /*add element to */
+      thisCart.dom.productList.appendChild(generatedDOM);
     }
   }
 
