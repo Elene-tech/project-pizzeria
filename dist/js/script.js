@@ -216,19 +216,17 @@
             formData[paramId] && formData[paramId].includes(optionId);
           // check if the option is not a default
           if (chosenOption) {
-            if (!option.default == true || !option.default == 'undefined') {
+            if (!option.default) {
+              //якщо значення не дефолтна
               price += option.price;
-            } else {
+            }
+          } else {
+            if (option.default) {
+              //не вибрана дефолтна опція
               price -= option.price;
             }
           }
-          // if (chosenOption) {
-          //   if (!option.default == true);
-          //   price += option.price;
-          // } else {
-          //   if (!option.default == false);
-          //   price -= option.price;
-          // }
+
           const optionImage = thisProduct.imageWrapper.querySelector(
             '.' + paramId + '-' + optionId
           );
@@ -256,13 +254,9 @@
       const thisProduct = this;
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
-      thisProduct.amountWidgetElem.addEventListener(
-        'updated',
-        function (event) {
-          event.preventDefault();
-          thisProduct.processOrder(); //додати просту анонімну функцію, яка подбає про запуск thisProduct.processOrder();
-        }
-      );
+      thisProduct.amountWidgetElem.addEventListener('updated', function () {
+        thisProduct.processOrder(); //додати просту анонімну функцію, яка подбає про запуск thisProduct.processOrder();
+      });
     }
     //У Product також додайте новий метод
     addToCart() {
@@ -353,16 +347,13 @@
       const {
         amountWidget: { defaultMax, defaultMin },
       } = settings;
-      if (newValue > defaultMax || newValue < defaultMin) {
+      if (
+        newValue > defaultMax ||
+        newValue < defaultMin ||
+        thisWidget.value === newValue ||
+        isNaN(newValue)
+      ) {
         return;
-      }
-
-      if (thisWidget.value !== newValue) {
-        thisWidget.value = newValue;
-      }
-      /*TODO: Add validation*/
-      if (thisWidget.value !== newValue && isNaN(newValue)) {
-        thisWidget.value = newValue;
       }
 
       thisWidget.value = newValue;
@@ -379,7 +370,7 @@
       const thisWidget = this;
       //використовуємо пусту функцію, щоб додати в аргумент функцію
       thisWidget.input.addEventListener('change', function () {
-        setValue(thisWidget.input.value);
+        thisWidget.setValue(thisWidget.input.value);
       });
       //додати Listener click, для якого обробник зупинить дію за замовчуванням для цієї події
       thisWidget.linkDecrease.addEventListener('click', function (event) {
