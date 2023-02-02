@@ -105,8 +105,6 @@
       thisProduct.initAmountWidget();
 
       thisProduct.processOrder();
-
-      console.log('new Product:', thisProduct); //add class Product
     }
     renderInMenu() {
       const thisProduct = this;
@@ -188,10 +186,19 @@
 
       thisProduct.cartButton.addEventListener('click', function (event) {
         event.preventDefault();
-        thisProduct.addToCart();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
     }
+    initAmountWidget() {
+      const thisProduct = this;
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+
+      thisProduct.amountWidgetElem.addEventListener('updated', function () {
+        thisProduct.processOrder(); //додати просту анонімну функцію, яка подбає про запуск thisProduct.processOrder();
+      });
+    }
+
     processOrder() {
       const thisProduct = this;
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
@@ -250,14 +257,7 @@
     }
 
     //в Product, додайте новий initAmountWidget
-    initAmountWidget() {
-      const thisProduct = this;
-      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
-      thisProduct.amountWidgetElem.addEventListener('updated', function () {
-        thisProduct.processOrder(); //додати просту анонімну функцію, яка подбає про запуск thisProduct.processOrder();
-      });
-    }
     //У Product також додайте новий метод
     addToCart() {
       const thisProduct = this;
@@ -276,25 +276,25 @@
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
         params: thisProduct.readyCartProductParams(),
       };
-      console.log(productSummary);
       return productSummary;
     }
 
     readyCartProductParams() {
+      //prepareCartProductParams- така назва в інструкції
       const thisProduct = this;
       // covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']}
       const formData = utils.serializeFormToObject(thisProduct.form);
 
       const params = {};
-
+      //for every ctegory(param)
       for (let paramId in thisProduct.data.params) {
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
+        //create category param in params const eg. params = { ingredients: { name: 'Ingredients', options: {}}}
         params[paramId] = {
           label: param.label,
           options: {},
         };
-        console.log(paramId, param);
 
         // for every option in this category
         for (let optionId in param.options) {
@@ -317,12 +317,10 @@
     constructor(element) {
       const thisWidget = this;
 
-      console.log('AmountWidget:', thisWidget);
-      console.log('constructor arguments:', element);
       thisWidget.getElements(element);
+      thisWidget.initActions();
       //викликати цей метод в конструкторі під час виклику getElements
       thisWidget.setValue(settings.amountWidget.defaultValue);
-      thisWidget.initActions();
     }
     getElements(element) {
       const thisWidget = this;
@@ -337,6 +335,7 @@
       thisWidget.linkIncrease = thisWidget.element.querySelector(
         select.widgets.amount.linkIncrease
       );
+      thisWidget.setValue(thisWidget.input.value);
     }
 
     setValue(value) {
@@ -392,7 +391,6 @@
       thisCart.products = [];
       thisCart.getElements(element);
       thisCart.initActions();
-      console.log('new Cart', thisCart);
     }
 
     getElements(element) {
@@ -402,7 +400,7 @@
       thisCart.dom.toggleTrigger = element.querySelector(
         select.cart.toggleTrigger
       );
-      thisCart.dom.productList = element.querySelector(select.cart.menuProduct);
+      thisCart.dom.productList = element.querySelector(select.cart.productList);
     }
     initActions() {
       const thisCart = this;
@@ -414,26 +412,33 @@
     }
 
     add(menuProduct) {
+      //productList?
       const thisCart = this;
 
       console.log('adding product', menuProduct);
 
       /*generate HTML based on template*/
       const generatedHTML = templates.cartProduct(menuProduct);
-      console.log(generatedHTML);
+
       //Потім замініть цей код elementом DOM і збережіть його в наступній константі, generatedDOM.
       /*create element using utils.createElementFromHTML*/
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
 
       /*find cart container*/
       const cartContainer = document.querySelector(select.containerOf.cart);
-      console.log(cartContainer);
+
       /*add element to */
       thisCart.dom.productList.appendChild(generatedDOM);
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
     }
   }
 
   const app = {
+    initData: function () {
+      const thisApp = this;
+      thisApp.data = dataSource;
+    },
+
     initMenu: function () {
       const thisApp = this;
       //add ititMenu function
@@ -444,30 +449,17 @@
       // console.log('testProduct:', testProduct);
     },
 
-    initData: function () {
+    init: function () {
       const thisApp = this;
-      thisApp.data = dataSource;
-    },
 
+      thisApp.initData();
+      thisApp.initMenu();
+      thisApp.initCart();
+    },
     initCart: function () {
       const thisApp = this;
       const cartElem = document.querySelector(select.containerOf.cart);
       thisApp.cart = new Cart(cartElem); //за межами app ми можемо викликати його за допомогою app.cart
-    },
-
-    init: function () {
-      const thisApp = this;
-      console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
-
-      thisApp.initData();
-
-      thisApp.initMenu();
-
-      thisApp.initCart();
     },
   };
 
