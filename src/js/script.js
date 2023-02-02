@@ -425,11 +425,14 @@
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
 
       /*find cart container*/
-      const cartContainer = document.querySelector(select.containerOf.cart);
+      let cartContainer = document.querySelector(select.containerOf.cart);
 
       /*add element to */
       thisCart.dom.productList.appendChild(generatedDOM);
-      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      // thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+
+      // thisCart.products.push(menuProduct);
+      // console.log('thisCart.Products', thisCart.Products);
     }
   }
 
