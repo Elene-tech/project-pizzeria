@@ -388,7 +388,7 @@
     constructor(element) {
       const thisCart = this;
 
-      thisCart.products = [];
+      thisCart.products = []; // products вже існує в нашому класі кошика
       thisCart.getElements(element);
       thisCart.initActions();
     }
@@ -425,14 +425,43 @@
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
 
       /*find cart container*/
-      let cartContainer = document.querySelector(select.containerOf.cart);
+      // let cartContainer = document.querySelector(select.containerOf.cart);
 
       /*add element to */
       thisCart.dom.productList.appendChild(generatedDOM);
-      // thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      //thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
 
-      // thisCart.products.push(menuProduct);
-      // console.log('thisCart.Products', thisCart.Products);
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      console.log('thisCart.products', thisCart.products);
+    }
+  }
+
+  class CartProduct {
+    constructor(menuProduct, element) {
+      //конструктор повинен приймати два аргументи: menuProduct і element
+      const thisCartProduct = this;
+      //зберегти в (thisCartProduct)) ньому всі властивості з menuProduct.
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.getElements(element);
+    }
+    getElements(element) {
+      const thisCartProduct = this;
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element.generatedDOM; //посилання до вихідного elementа DOM
+      thisCartProduct.dom.amountWidget = element.querySelector(
+        select.cartProduct.amountWidget
+      );
+      thisCartProduct.dom.price = element.querySelector(
+        select.cartProduct.price
+      );
+      thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = element.querySelector(
+        select.cartProduct.remove
+      );
     }
   }
 
