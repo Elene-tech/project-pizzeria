@@ -39,6 +39,7 @@
       totalNumber: `.cart__total-number`,
       totalPrice:
         '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
+      totalPriceTitle: '.cart__order-total .cart__order-price-sum strong',
       subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
       deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
       form: '.cart__order',
@@ -143,7 +144,6 @@
       thisProduct.amountWidgetElem = thisProduct.element.querySelector(
         select.menuProduct.amountWidget
       );
-      console.log(thisProduct.amountWidgetElem);
     }
 
     initAccordion() {
@@ -211,13 +211,12 @@
       for (let paramId in thisProduct.data.params) {
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
-        console.log(paramId, param);
 
         // for every option in this category
         for (let optionId in param.options) {
           // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
-          //console.log(optionId, option);
+
           //check if formData parameter has a value and if there`s a name of an option
           const chosenOption =
             formData[paramId] && formData[paramId].includes(optionId);
@@ -237,7 +236,7 @@
           const optionImage = thisProduct.imageWrapper.querySelector(
             '.' + paramId + '-' + optionId
           );
-          console.log(optionImage);
+
           if (optionImage) {
             if (chosenOption) {
               optionImage.classList.add(classNames.menuProduct.imageVisible);
@@ -361,7 +360,7 @@
     }
     announce() {
       const thisWidget = this;
-      const event = new Event('updated');
+      const event = new CustomEvent('updated', { bubbles: true });
       thisWidget.element.dispatchEvent(event);
     }
 
@@ -391,6 +390,7 @@
       thisCart.products = []; // products вже існує в нашому класі кошика
       thisCart.getElements(element);
       thisCart.initActions();
+      //thisCart.remove();
     }
 
     getElements(element) {
@@ -401,6 +401,21 @@
         select.cart.toggleTrigger
       );
       thisCart.dom.productList = element.querySelector(select.cart.productList);
+      thisCart.dom.deliveryFee = element.querySelector(select.cart.deliveryFee);
+      thisCart.dom.subtotalPrice = element.querySelector(
+        select.cart.subtotalPrice
+      );
+      thisCart.dom.totalPrice = element.querySelector(select.cart.totalPrice);
+      thisCart.dom.totalNumber = element.querySelector(select.cart.totalNumber);
+      thisCart.dom.totalPriceTitle = element.querySelector(
+        select.cart.totalPriceTitle
+      );
+      thisCart.dom.cartProductRemove = element.querySelector(
+        select.cartProduct.remove
+      );
+      thisCart.dom.cartProductEdit = element.querySelector(
+        select.cartProduct.edit
+      );
     }
     initActions() {
       const thisCart = this;
@@ -409,13 +424,17 @@
         //збереженого в classNames.cart.wrapperActive для thisCart.dom.wrapper.
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
+      thisCart.dom.productList.addEventListener('updated', function () {
+        thisCart.update();
+      });
+      thisCart.dom.productList.addEventListener('remove', function (event) {
+        thisCart.remove(event.detail.cartProduct);
+      });
     }
 
     add(menuProduct) {
       //productList?
       const thisCart = this;
-
-      console.log('adding product', menuProduct);
 
       /*generate HTML based on template*/
       const generatedHTML = templates.cartProduct(menuProduct);
@@ -430,28 +449,68 @@
       /*add element to */
       thisCart.dom.productList.appendChild(generatedDOM);
       //thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      //передаємо ProductListб щоб потім викликати remove
+      thisCart.products.push(
+        new CartProduct(menuProduct, generatedDOM, thisCart.dom.productList)
+      );
+      thisCart.update();
+    }
+    update() {
+      const thisCart = this;
+      const deliveryFee = settings.cart.defaultDeliveryFee;
+      let totalNumber = 0; //для загальної кількості товарів
+      let subtotalPrice = 0; //загальна ціна за все
 
-      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
-      console.log('thisCart.products', thisCart.products);
+      for (let product of thisCart.products) {
+        //додайте for...of,який буде проходити через thisCart.products.
+        totalNumber += product.amount; //це збільшує totalNumber на кількість elementів даного продукту
+        subtotalPrice += product.price; //збільшиться subtotalPrice на його загальну ціну ( price)
+      }
+      if (totalNumber != 0) {
+        thisCart.totalPrice = subtotalPrice * totalNumber + deliveryFee;
+      }
+      thisCart.dom.deliveryFee.innerHTML = deliveryFee;
+      thisCart.dom.totalNumber.innerHTML = totalNumber;
+      thisCart.dom.subtotalPrice.innerHTML = subtotalPrice;
+      thisCart.dom.totalPriceTitle.innerHTML = subtotalPrice + deliveryFee;
+      thisCart.dom.totalPrice.innerHTML = subtotalPrice + deliveryFee;
+      console.log('totalPrice', thisCart.totalPrice);
+      console.log('subTotalPrice', thisCart.subtotalPrice);
+    }
+    remove(cartProduct) {
+      const thisCart = this;
+      //звертаємось до корзини, до продуктів, вирізаємо(splice) продукт()
+      thisCart.products.splice(
+        thisCart.products.indexOf(cartProduct), //знаходимо індекс продукту серед усих продуктів
+        1 //скільки елементів треба вирізати
+      );
+      cartProduct.dom.wrapper.remove(); //видаляємо з html
+      thisCart.update(); //оновлюємо саму корзину
     }
   }
 
   class CartProduct {
-    constructor(menuProduct, element) {
+    //додаємо третій аргуумент, з якого видаляємо item
+    constructor(menuProduct, element, productList) {
       //конструктор повинен приймати два аргументи: menuProduct і element
       const thisCartProduct = this;
       //зберегти в (thisCartProduct)) ньому всі властивості з menuProduct.
       thisCartProduct.id = menuProduct.id;
+      thisCartProduct.productList = productList;
       thisCartProduct.name = menuProduct.name;
       thisCartProduct.amount = menuProduct.amount;
       thisCartProduct.priceSingle = menuProduct.priceSingle;
       thisCartProduct.price = menuProduct.price;
+      thisCartProduct.remove = this.remove; // посилається на функцію remove  from class CartProduct
+      thisCartProduct.edit = menuProduct.edit;
       thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
+      thisCartProduct.initActions();
     }
     getElements(element) {
       const thisCartProduct = this;
       thisCartProduct.dom = {};
-      thisCartProduct.dom.wrapper = element.generatedDOM; //посилання до вихідного elementа DOM
+      thisCartProduct.dom.wrapper = element; //посилання до вихідного elementа DOM
       thisCartProduct.dom.amountWidget = element.querySelector(
         select.cartProduct.amountWidget
       );
@@ -462,6 +521,42 @@
       thisCartProduct.dom.remove = element.querySelector(
         select.cartProduct.remove
       );
+    }
+    initAmountWidget() {
+      const thisCartProduct = this;
+      thisCartProduct.amountWidget = new AmountWidget(
+        thisCartProduct.dom.amountWidget
+      );
+      // повторно встановити значення для двох властивостей, які були спочатку встановлені в конструкторі
+      //s – thisCartProduct.amount і thisCartProduct.price.
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price =
+          thisCartProduct.amount * thisCartProduct.priceSingle;
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+      });
+    }
+
+    remove() {
+      const thisCartProduct = this;
+
+      const event = new CustomEvent('remove', {
+        bubbles: true,
+        detail: { cartProduct: thisCartProduct },
+      });
+      thisCartProduct.productList.dispatchEvent(event); //для передачі remove (тригер ремув) в класс Cart
+    }
+    initActions() {
+      const thisCartProduct = this;
+
+      thisCartProduct.dom.edit.addEventListener('click', function (event) {
+        event.preventDefault();
+      });
+
+      thisCartProduct.dom.remove.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisCartProduct.remove(); //виклакаємо функцію
+      });
     }
   }
 
@@ -477,8 +572,6 @@
       for (let productData in thisApp.data.products) {
         new Product(productData, thisApp.data.products[productData]);
       }
-      // const testProduct = new Product();
-      // console.log('testProduct:', testProduct);
     },
 
     init: function () {
