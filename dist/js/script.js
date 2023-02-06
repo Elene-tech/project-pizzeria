@@ -421,6 +421,10 @@
       thisCart.dom.cartProductEdit = element.querySelector(
         select.cartProduct.edit
       );
+      thisCart.dom.form = element.querySelector(select.cart.form);
+      thisCart.dom.formSubmit = element.querySelector(select.cart.formSubmit);
+      thisCart.dom.phone = element.querySelector(select.cart.phone);
+      thisCart.dom.address = element.querySelector(select.cart.address);
     }
     initActions() {
       const thisCart = this;
@@ -434,6 +438,10 @@
       });
       thisCart.dom.productList.addEventListener('remove', function (event) {
         thisCart.remove(event.detail.cartProduct);
+      });
+      thisCart.dom.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        thisCart.sendOrder();
       });
     }
 
@@ -473,14 +481,21 @@
       }
       if (totalNumber != 0) {
         thisCart.totalPrice = subtotalPrice * totalNumber + deliveryFee;
+        thisCart.subtotalPrice = subtotalPrice;
+        thisCart.totalNumber = totalNumber;
+        thisCart.deliveryFee = deliveryFee;
+        thisCart.totalPriceTitle = subtotalPrice + deliveryFee;
       }
       thisCart.dom.deliveryFee.innerHTML = deliveryFee;
       thisCart.dom.totalNumber.innerHTML = totalNumber;
       thisCart.dom.subtotalPrice.innerHTML = subtotalPrice;
-      thisCart.dom.totalPriceTitle.innerHTML = subtotalPrice + deliveryFee;
-      thisCart.dom.totalPrice.innerHTML = subtotalPrice + deliveryFee;
-      console.log('totalPrice', thisCart.totalPrice);
-      console.log('subTotalPrice', thisCart.subtotalPrice);
+      thisCart.dom.totalPriceTitle.innerHTML = thisCart.totalPrice;
+      thisCart.dom.totalPrice.innerHTML = thisCart.totalPrice;
+      // console.log('totalPrice', thisCart.totalPrice);
+      // console.log('subTotalPrice', thisCart.subtotalPrice);
+      // console.log('totalNumber', thisCart.totalNumber);
+      // console.log('deliveryFee', thisCart.deliveryFee);
+      // console.log('totalPriceTitle', thisCart.totalPriceTitle);
     }
     remove(cartProduct) {
       const thisCart = this;
@@ -491,6 +506,39 @@
       );
       cartProduct.dom.wrapper.remove(); //видаляємо з html
       thisCart.update(); //оновлюємо саму корзину
+    }
+    sendOrder() {
+      const thisCart = this;
+      const url = settings.db.url + '/' + settings.db.orders;
+      const payload = {
+        address: thisCart.dom.address.value,
+        phone: thisCart.dom.phone.value,
+        totalPrice: thisCart.totalPrice,
+        subtotalPrice: thisCart.subtotalPrice,
+        totalNumber: thisCart.totalNumber,
+        deliveryFee: settings.cart.defaultDeliveryFee,
+        products: [],
+      };
+      console.log('payload', payload);
+      for (let prod of thisCart.products) {
+        payload.products.push(prod.getData());
+      }
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      };
+
+      fetch(url, options)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (parsedResponse) {
+          console.log('parsedResponse', parsedResponse);
+        });
     }
   }
 
@@ -506,6 +554,7 @@
       thisCartProduct.amount = menuProduct.amount;
       thisCartProduct.priceSingle = menuProduct.priceSingle;
       thisCartProduct.price = menuProduct.price;
+      thisCartProduct.params = menuProduct.params; //додали параметри продукту
       thisCartProduct.remove = this.remove; // посилається на функцію remove  from class CartProduct
       thisCartProduct.edit = menuProduct.edit;
       thisCartProduct.getElements(element);
@@ -562,6 +611,19 @@
         event.preventDefault();
         thisCartProduct.remove(); //виклакаємо функцію
       });
+    }
+    getData() {
+      const thisCartProduct = this;
+      const getDataForServer = {
+        id: thisCartProduct.id,
+        amount: thisCartProduct.amount,
+        price: thisCartProduct.price,
+        priceSingle: thisCartProduct.priceSingle,
+        name: thisCartProduct.name,
+        params: thisCartProduct.params, //(?)
+      };
+      console.log('getDataForServer', getDataForServer);
+      return getDataForServer;
     }
   }
 
