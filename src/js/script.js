@@ -356,10 +356,12 @@
         isNaN(newValue)
       ) {
         thisWidget.input.value = thisWidget.value;
+
         return;
       }
 
       thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget.value;
       thisWidget.announce();
     }
     announce() {
