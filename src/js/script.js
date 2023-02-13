@@ -251,10 +251,9 @@
           }
         }
       }
-      //multiply price by amount
-      price *= thisProduct.amountWidget.value;
-      // update calculated price in the HTML
+
       thisProduct.priceSingle = price;
+      price *= thisProduct.amountWidget.value;
       //додайте оператор, який надає priceSingle нову властивістьthisProduct.
       // Призначте його значенням тієї ж ціни, що ми також записали в HTML
       thisProduct.priceElem.innerHTML = price;
@@ -356,11 +355,11 @@
         thisWidget.value === newValue ||
         isNaN(newValue)
       ) {
+        thisWidget.input.value = thisWidget.value;
         return;
       }
 
       thisWidget.value = newValue;
-      thisWidget.input.value = thisWidget.value;
       thisWidget.announce();
     }
     announce() {
@@ -470,42 +469,38 @@
     }
     update() {
       const thisCart = this;
-      const deliveryFee = settings.cart.defaultDeliveryFee;
+      let deliveryFee = 0;
       let totalNumber = 0; //для загальної кількості товарів
       let subtotalPrice = 0; //загальна ціна за все
+      let totalPrice = 0;
 
       for (let product of thisCart.products) {
         //додайте for...of,який буде проходити через thisCart.products.
         totalNumber += product.amount; //це збільшує totalNumber на кількість elementів даного продукту
         subtotalPrice += product.price; //збільшиться subtotalPrice на його загальну ціну ( price)
       }
-      if (totalNumber != 0) {
-        thisCart.totalPrice = subtotalPrice * totalNumber + deliveryFee;
-        thisCart.subtotalPrice = subtotalPrice;
-        thisCart.totalNumber = totalNumber;
-        thisCart.deliveryFee = deliveryFee;
-        thisCart.totalPriceTitle = subtotalPrice + deliveryFee;
+      if (totalNumber) {
+        deliveryFee = settings.cart.defaultDeliveryFee;
+        totalPrice = subtotalPrice + deliveryFee;
       }
       thisCart.dom.deliveryFee.innerHTML = deliveryFee;
       thisCart.dom.totalNumber.innerHTML = totalNumber;
       thisCart.dom.subtotalPrice.innerHTML = subtotalPrice;
-      thisCart.dom.totalPriceTitle.innerHTML = thisCart.totalPrice;
-      thisCart.dom.totalPrice.innerHTML = thisCart.totalPrice;
-      // console.log('totalPrice', thisCart.totalPrice);
-      // console.log('subTotalPrice', thisCart.subtotalPrice);
-      // console.log('totalNumber', thisCart.totalNumber);
-      // console.log('deliveryFee', thisCart.deliveryFee);
-      // console.log('totalPriceTitle', thisCart.totalPriceTitle);
+      thisCart.dom.totalPriceTitle.innerHTML = totalPrice;
+      thisCart.dom.totalPrice.innerHTML = totalPrice;
     }
     remove(cartProduct) {
       const thisCart = this;
+      let indexProduct = thisCart.products.indexOf(cartProduct);
+      if (indexProduct !== -1) {
+        thisCart.products.splice(
+          indexProduct, //знаходимо індекс продукту серед усих продуктів
+          1 //скільки елементів треба вирізати
+        );
+        cartProduct.dom.wrapper.remove(); //видаляємо з html
+        thisCart.update(); //оновлюємо саму корзину
+      }
       //звертаємось до корзини, до продуктів, вирізаємо(splice) продукт()
-      thisCart.products.splice(
-        thisCart.products.indexOf(cartProduct), //знаходимо індекс продукту серед усих продуктів
-        1 //скільки елементів треба вирізати
-      );
-      cartProduct.dom.wrapper.remove(); //видаляємо з html
-      thisCart.update(); //оновлюємо саму корзину
     }
     sendOrder() {
       const thisCart = this;
@@ -643,7 +638,12 @@
           /*save parsedResponse as thisApp.data.products*/
           thisApp.initMenu();
           /*execute initMenu method*/
+        })
+        .catch(function (error) {
+          console.error(error.message);
+          //alert('You have an error!');
         });
+
       console.log('thisApp.data', JSON.stringify(thisApp.data));
     },
 
