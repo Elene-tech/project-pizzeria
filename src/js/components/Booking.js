@@ -3,24 +3,34 @@ import AmountWidget from './AmountWidget.js';
 import utils from '../utils.js';
 
 class Booking {
-  constructor(bookingWidget) {
+  constructor(element) {
     //отримує посилання на контейнер, наданий у app.initBooking, як аргумент
     const thisBooking = this;
-    thisBooking.bookingWidget = bookingWidget;
-
-    thisBooking.renderBooking();
+    thisBooking.renderBooking(element);
     thisBooking.initWidgets();
   }
-  renderBooking() {
+  renderBooking(element) {
     const thisBooking = this;
-    const bookingWidget = document.querySelector(select.containerOf.booking);
-    console.log('bookingWidget', bookingWidget);
-    const generatedHTML = templates.bookingWidget(thisBooking.bookingWidget);
-    console.log('generatedHTML', generatedHTML);
+    const generatedHTML = templates.bookingWidget();
     thisBooking.dom = {};
-    thisBooking.dom.wrapper = bookingWidget;
+    thisBooking.dom.wrapper = element;
+
     thisBooking.dom.wrapper.innerHTML = generatedHTML;
+
+    thisBooking.dom.peopleAmount = document.querySelector(
+      select.booking.peopleAmount
+    );
+    thisBooking.dom.hoursAmount = document.querySelector(
+      select.booking.hoursAmount
+    );
   }
-  initWidgets() {}
+  initWidgets() {
+    const thisBooking = this;
+    thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
+    thisBooking.dom.peopleAmount.addEventListener('update', function () {});
+
+    thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
+    thisBooking.dom.hoursAmount.addEventListener('update', function () {});
+  }
 }
 export default Booking;

@@ -70,7 +70,6 @@ const app = {
         return rawResponse.json();
       })
       .then(function (parsedResponse) {
-        console.log('parsedResponse', parsedResponse);
         thisApp.data.products = parsedResponse;
         /*save parsedResponse as thisApp.data.products*/
         thisApp.initMenu();
@@ -80,8 +79,6 @@ const app = {
     //   console.error(error.message);
     //   //alert('You have an error!');
     // });
-
-    console.log('thisApp.data', JSON.stringify(thisApp.data));
   },
 
   initMenu: function () {
