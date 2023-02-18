@@ -108,7 +108,7 @@ export const settings = {
   datePicker: {
     maxDaysInFuture: 14,
   },
-  booking: {
+  bookings: {
     tableIdAttribute: 'data-table',
   },
   db: {
