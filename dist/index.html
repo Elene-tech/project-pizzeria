@@ -21,6 +21,7 @@
           <h2 class="logo__subtitle">the best homemade Italian food</h2>
         </div>
         <div class="main-nav">
+          <a href="#home">Home</a>
           <a href="#order">Order</a>
           <a href="#booking">Booking</a>
         </div>
@@ -62,6 +63,9 @@
   </header>
 
  <div id="pages">
+  <section id="home">
+    <div id="home-wrapper" class="home-wrapper container"></div>
+  </section>
    <section id="order">
      <div id="product-list" class="product-list container"></div>
    </section>
@@ -69,6 +73,24 @@
      <div class="booking-wrapper container"></div>
    </section>
  </div>
+<script id="template-home-widget" type="text/x-handlebars-template">
+ <div class="home-widget-header">
+   <div class="home-widget-wrapper">
+      <div class="home-widget-box">
+            <img src="./images/home/pizza-1.jpg">
+            <div class="order-book" id-data="order">
+              <a href="#order" class="home-btn"><h3>ORDER ONLINE</h3></a>
+            <p>Delicious food delivered to your door</p>
+       </div>       
+      </div>
+
+      <div class="home-widget-box">
+         <div class="book_table">Book a table</div>
+         </div>
+    </div>
+   </div>  
+ </div>
+ </script>
  <script id="template-booking-widget" type="text/x-handlebars-template">
    <div class="booking-widget">
      <h2 class="page__title no-spacing">Book a table</h2>
@@ -134,6 +156,8 @@
      </form>
    </div>
  </script>
+
+ 
 
   <script id="template-cart-product" type="text/x-handlebars-template">
     <li>

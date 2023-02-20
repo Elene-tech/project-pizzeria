@@ -2,6 +2,7 @@ import { settings, select, classNames } from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
 import Booking from './components/Booking.js';
+import Home from './components/Home.js';
 
 const app = {
   initPages: function () {
@@ -44,11 +45,6 @@ const app = {
 
     /*add class Active to matching pages, remove class Active from non-matching pages */
     for (let page of thisApp.pages) {
-      // if (page.id == pageId) {
-      //   page.classList.add(classNames.pages.active);
-      // } else {
-      //   page.classList.remove(classNames.pages.active);
-      // }
       page.classList.toggle(classNames.pages.active, page.id == pageId);
     }
     for (let link of thisApp.navLinks) {
@@ -99,6 +95,7 @@ const app = {
     thisApp.initCart();
     thisApp.initPages();
     thisApp.initBooking();
+    thisApp.initHome();
   },
   initCart: function () {
     const thisApp = this;
@@ -113,6 +110,11 @@ const app = {
     const thisApp = this;
     const bookingWidget = document.querySelector(select.containerOf.booking); //контейнер віджета резервування сторінки
     thisApp.booking = new Booking(bookingWidget);
+  },
+  initHome: function () {
+    const thisApp = this;
+    const homeWidget = document.querySelector(select.containerOf.home);
+    thisApp.pageHome = new Home(homeWidget);
   },
 };
 
