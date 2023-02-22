@@ -9,6 +9,7 @@
   <link href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="vendor/range-slider.min.css">
+  <link rel="stylesheet" href="vendor/flickity.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -73,24 +74,43 @@
      <div class="booking-wrapper container"></div>
    </section>
  </div>
+
 <script id="template-home-widget" type="text/x-handlebars-template">
+
  <div class="home-widget-header">
-   <div class="home-widget-wrapper">
-      <div class="home-widget-box">
-            <img src="./images/home/pizza-1.jpg">
-            <div class="order-book" id-data="order">
-              <a href="#order" class="home-btn"><h3>ORDER ONLINE</h3></a>
-            <p>Delicious food delivered to your door</p>
-       </div>       
+
+   <div class="home-header">
+        <div class="row-wrapper">
+          <div class="box">
+            <img src="./images/home/pizza-1.jpg"/> 
+            <div class="text-description">     
+              <h3>ORDER ONLINE</h3>
+              <p>Delicious food delivered to your door</p> 
+            </div>         
+          </div>
+          <div class="box">
+            <img src='./images/home/pizza-2.jpg' />   
+            <div class="text-description">     
+              <h3>BOOK A TABLE</h3>
+              <p>Enjoy your time in our restaurant</p> 
+            </div>           
+          </div>
+        </div>
+        <div class='bottom-box'>
+          <h3>OPENING HOURS:</h3>
+          <h4 class='open-time'>TUE-SUN, 12 PM - 12 AM</h4>
+        </div>
       </div>
 
-      <div class="home-widget-box">
-         <div class="book_table">Book a table</div>
-         </div>
-    </div>
-   </div>  
- </div>
- </script>
+        <div class="carousel" data-flickity='{ "autoPlay": true }'>
+            <div class="carousel-cell"><img src="./images/home/pizza-1.jpg"></div>
+            <div class="carousel-cell"><img src="./images/home/pizza-3.jpg"></div>
+            <div class="carousel-cell"><img src="./images/home/pizza-4.jpg"></div>
+            <div class="carousel-cell"><img src="./images/home/pizza-5.jpg"></div>
+        </div>
+    </div>  
+</script>
+
  <script id="template-booking-widget" type="text/x-handlebars-template">
    <div class="booking-widget">
      <h2 class="page__title no-spacing">Book a table</h2>
@@ -156,9 +176,6 @@
      </form>
    </div>
  </script>
-
- 
-
   <script id="template-cart-product" type="text/x-handlebars-template">
     <li>
       <div class="widget-amount"> <!-- widget-amount -->
@@ -269,6 +286,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="vendor/range-slider.min.js"></script>
+  <script src="vendor/flickity.pkgd.min.js"></script>
   <script src="js/app.js" type="module"></script>
 </body>
 </html>
