@@ -6,6 +6,9 @@
   border-bottom: 1px solid lighten($color-dark, 70%);
   border-radius: $radius;
 }
+.home-header {
+  margin-bottom: 60px;
+}
 
 h3 {
   font-family: $font-header;
@@ -34,29 +37,44 @@ h4 {
   justify-content: center;
   border-radius: $radius;
   position: relative;
-
-  .text-description {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    text-align: center;
+  a {
+    text-decoration: none;
     color: $color-light;
+  }
+  img {
+    width: 300px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: $radius;
+  }
+  h3 {
+    margin: 36px 0 0 0;
+  }
+  p {
+    opacity: 0;
+    margin-bottom: 10px;
+  }
+  &:hover p {
+    transform: translateY(-20%);
+    transition: $transition;
+    opacity: 100%;
+    margin: 0;
   }
 }
 
-.box img {
-  width: 300px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: $radius;
-}
-
-.order-book {
+.text-description {
   position: absolute;
-  display: inline-block;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
   color: $color-light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transition: 0.6s;
 }
 
 .bottom-box {
@@ -67,15 +85,130 @@ h4 {
   color: $color-light;
   text-align: center;
   flex: 100%;
-  margin: ($base-size / 2) 0;
-  padding: ($base-size * 2) 0;
+  margin: 6px 0;
+  padding: 24px 0;
+
+  h3 {
+    margin: auto;
+  }
+  .open-time {
+    margin: 0;
+    font-weight: $font-semibold;
+  }
+}
+.carousel {
+  margin-bottom: 60px;
+}
+.carousel-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: $radius;
+  }
+  & > div {
+    flex-basis: 50%;
+  }
+  .text-col {
+    margin: 0 0 0 20px;
+  }
+}
+/*gallery*/
+.gallery {
+  flex-direction: column;
+  .row {
+    display: flex;
+    width: 100%;
+  }
 }
 
-.bottom-box h3 {
-  margin: auto;
+.gallery-image {
+  position: relative;
+  transition: transform 2s;
+  width: 33.33333%;
+  height: 200px;
+  margin: 5px;
+  border-radius: $radius;
+  background-position: center center;
+  background-size: cover;
+
+  &:hover::before {
+    position: absolute;
+    content: '';
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    border-radius: $radius;
+  }
+
+  i {
+    visibility: hidden;
+    margin: 3px;
+    transform: scale(0.2);
+    transition: 0.5s;
+  }
+
+  &:hover i {
+    visibility: visible;
+    color: $color-main;
+    transform: scale(1);
+  }
+
+  a:hover i {
+    color: rgb(235, 55, 55);
+    .icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    .icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
 }
 
-.open-time {
-  margin: 0;
-  font-weight: $font-semibold;
+.pizza-1 {
+  background-image: url(../images/home/pizza-4.jpg);
+}
+
+.pizza-2 {
+  background-image: url(../images/home/pizza-5.jpg);
+}
+
+.pizza-3 {
+  background-image: url(../images/home/pizza-6.jpg);
+}
+
+.pizza-4 {
+  background-image: url(../images/home/pizza-7.jpg);
+}
+
+.pizza-5 {
+  background-image: url(../images/home/pizza-8.jpg);
+}
+
+.pizza-6 {
+  background-image: url(../images/home/pizza-9.jpg);
+}
+/*Link*/
+.link {
+  margin: 40px 0 0 5px;
+  a {
+    color: black;
+    text-decoration: none;
+  }
+
+  a:active {
+    color: red;
+  }
+  a:hover {
+    color: rgba(198, 10, 10, 0.858);
+  }
 }
