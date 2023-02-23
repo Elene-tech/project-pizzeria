@@ -95,7 +95,7 @@ const app = {
     thisApp.initCart();
     thisApp.initPages();
     thisApp.initBooking();
-    thisApp.initHome();
+    thisApp.initHome(); //викликаємо initHome
   },
   initCart: function () {
     const thisApp = this;
@@ -114,7 +114,7 @@ const app = {
   initHome: function () {
     const thisApp = this;
     const homeWidget = document.querySelector(select.containerOf.home);
-    thisApp.pageHome = new Home(homeWidget);
+    thisApp.pageHome = new Home(homeWidget, thisApp); //додаємо thisApp другим аргументом
   },
 };
 
