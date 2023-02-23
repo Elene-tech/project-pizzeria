@@ -6,6 +6,7 @@
   border-bottom: 1px solid lighten($color-dark, 70%);
   border-radius: $radius;
 }
+
 .home-header {
   margin-bottom: 60px;
 }
@@ -37,25 +38,36 @@ h4 {
   justify-content: center;
   border-radius: $radius;
   position: relative;
+
   a {
     text-decoration: none;
     color: $color-light;
   }
+
   img {
     width: 300px;
     height: 120px;
     object-fit: cover;
     border-radius: $radius;
   }
+
   h3 {
-    margin: 36px 0 0 0;
+    margin: 20px 0 0 0;
   }
+
+  &:hover h3 {
+    transform: translateY(-25%);
+    transition: $transition;
+    margin: 0 0 10px 0;
+  }
+
   p {
     opacity: 0;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
+
   &:hover p {
-    transform: translateY(-20%);
+    transform: translateY(-25%);
     transition: $transition;
     opacity: 100%;
     margin: 0;
@@ -91,26 +103,32 @@ h4 {
   h3 {
     margin: auto;
   }
+
   .open-time {
     margin: 0;
     font-weight: $font-semibold;
   }
 }
+
 .carousel {
   margin-bottom: 60px;
 }
+
 .carousel-cell {
   display: flex;
   align-items: center;
   justify-content: center;
+
   img {
     max-width: 100%;
     max-height: 100%;
     border-radius: $radius;
   }
-  & > div {
+
+  > div {
     flex-basis: 50%;
   }
+
   .text-col {
     margin: 0 0 0 20px;
   }
@@ -118,6 +136,7 @@ h4 {
 /*gallery*/
 .gallery {
   flex-direction: column;
+
   .row {
     display: flex;
     width: 100%;
@@ -159,12 +178,7 @@ h4 {
 
   a:hover i {
     color: rgb(235, 55, 55);
-    .icons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
+
     .icons {
       display: flex;
       justify-content: center;
@@ -200,6 +214,7 @@ h4 {
 /*Link*/
 .link {
   margin: 40px 0 0 5px;
+
   a {
     color: black;
     text-decoration: none;
@@ -208,6 +223,7 @@ h4 {
   a:active {
     color: red;
   }
+
   a:hover {
     color: rgba(198, 10, 10, 0.858);
   }
