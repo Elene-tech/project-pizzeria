@@ -71,6 +71,7 @@ export const select = {
     phone: 'input[name="phone"]',
     address: 'input[name="address"]',
     starters: 'input[type="check-box"]',
+    btnSecondary: '#booking .order-confirmation .btn-secondary',
   },
   nav: {
     links: '.main-nav a',

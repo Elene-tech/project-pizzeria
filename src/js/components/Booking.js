@@ -199,6 +199,9 @@ class Booking {
       select.booking.starters
     );
     thisBooking.dom.form = document.querySelector(select.booking.form);
+    thisBooking.dom.btnSecondary = document.querySelector(
+      select.booking.btnSecondary
+    );
   }
   initWidgets() {
     const thisBooking = this;
@@ -220,6 +223,10 @@ class Booking {
       thisBooking.initTables(event);
     });
     thisBooking.dom.form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      thisBooking.sendBooking();
+    });
+    thisBooking.dom.btnSecondary.addEventListener('click', function (event) {
       event.preventDefault();
       thisBooking.sendBooking();
     });
@@ -256,9 +263,9 @@ class Booking {
     const url = settings.db.url + '/' + settings.db.bookings;
     const payload = {
       date: thisBooking.datePicker.value,
-      table: Number(thisBooking.selectedTable),
+      table: parseInt(thisBooking.selectedTable),
       hour: thisBooking.dom.HourPicker,
-      duration: thisBooking.hoursAmount,
+      duration: thisBooking.hoursAmount.value,
       ppl: thisBooking.peopleAmount.value,
       phone: thisBooking.phone.value,
       address: thisBooking.address.value,
@@ -285,13 +292,7 @@ class Booking {
       .then(function (parsedResponse) {
         console.log('parsedResponse', parsedResponse);
 
-        thisBooking.makeBooked(
-          payload.date,
-          payload.hour,
-          payload.duration,
-          payload.table
-        );
-        thisBooking.updateDOM();
+        thisBooking.getData();
       });
   }
 }
