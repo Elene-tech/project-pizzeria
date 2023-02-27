@@ -67,10 +67,12 @@ export const select = {
     hoursAmount: '.hours-amount',
     tables: '.floor-plan .table',
     floorPlan: '.floor-plan',
+    duration: '.hours-amount .amount',
+    people: '.people-amount .amount',
     form: 'form',
     phone: 'input[name="phone"]',
     address: 'input[name="address"]',
-    starters: 'input[type="check-box"]',
+    starters: 'input[name="starter"]',
     btnSecondary: '#booking .order-confirmation .btn-secondary',
   },
   nav: {
@@ -90,6 +92,8 @@ export const classNames = {
   booking: {
     loading: 'loading',
     tableBooked: 'booked',
+    table: 'table',
+    tableSelected: 'selected',
   },
   nav: {
     active: 'active',
